@@ -1,0 +1,68 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 453aaadcbd40d97468fbb15577c604f8, type: 3}
+  m_Name: DefaultGuns
+  m_EditorClassIdentifier: Assembly-CSharp::Assets.Scripts.GameAssetsControl.GunContainer
+  _guns:
+  - _type: 1
+    _gunPrefab: {fileID: 4730712812799886289, guid: 2ad880c6a72f86946b15ae0e98b43dcb, type: 3}
+    _ammo: 30
+    _ammoPackage: 5
+    _fireRate: 2
+    _velocity: 20
+    _damageAmount: 1
+    _aimSprite: {fileID: 0}
+  - _type: 2
+    _gunPrefab: {fileID: 4780292864474825719, guid: ada8675086591a64fb4fa55419d3639e, type: 3}
+    _ammo: 12
+    _ammoPackage: 3
+    _fireRate: 1
+    _velocity: 10
+    _damageAmount: 1
+    _aimSprite: {fileID: 0}
+  - _type: 3
+    _gunPrefab: {fileID: 8927542243860672594, guid: 083028fedec644c4398f5e0d5c47e327, type: 3}
+    _ammo: 50
+    _ammoPackage: 1
+    _fireRate: 8
+    _velocity: 40
+    _damageAmount: 1
+    _aimSprite: {fileID: 0}
+  - _type: 4
+    _gunPrefab: {fileID: 8927542243860672594, guid: bdfb59cdef262b14bb70b362378ba989, type: 3}
+    _ammo: 50
+    _ammoPackage: 1
+    _fireRate: 15
+    _velocity: 40
+    _damageAmount: 1
+    _aimSprite: {fileID: 0}
+  _gunItems:
+  - _type: 1
+    _item:
+      _type: 0
+      _gunPrefab: {fileID: 0}
+      _ammo: 0
+      _ammoPackage: 0
+      _fireRate: 0
+      _velocity: 0
+      _damageAmount: 1
+      _aimSprite: {fileID: 0}
+  - _type: 1
+    _item:
+      _type: 0
+      _gunPrefab: {fileID: 0}
+      _ammo: 0
+      _ammoPackage: 0
+      _fireRate: 0
+      _velocity: 0
+      _damageAmount: 1
+      _aimSprite: {fileID: 0}
