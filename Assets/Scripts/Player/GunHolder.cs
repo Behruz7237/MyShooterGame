@@ -24,6 +24,8 @@ namespace Assets.Scripts.Player
 
         private void Awake()
         {
+            if (_cameraTransform == null) _cameraTransform = Camera.main.transform;
+
             var gunContainer = Resources.Load<GunContainer>(GameConstants.GunHolderResource);
             foreach (var gun in gunContainer.Guns)
             {

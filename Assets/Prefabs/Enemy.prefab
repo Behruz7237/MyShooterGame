@@ -106,6 +106,13 @@ MonoBehaviour:
   _fireRate: 0.3
   _waitTimeBetweenShots: 2
   _timeToShoot: 1
+  _materials:
+  - {fileID: 2100000, guid: a1d60d89ec1d74d47b2072554ff2cffc, type: 2}
+  - {fileID: 2100000, guid: 5e66cbdadef7ada43b97aee9e16a25fc, type: 2}
+  - {fileID: 2100000, guid: 21c523da74de5e640b1b068246fd96e1, type: 2}
+  - {fileID: 2100000, guid: 8cf25e80ea5aa0f4eb0ec086847bc6ef, type: 2}
+  - {fileID: 2100000, guid: 1397a2b0326a93f439eed6fd05489d57, type: 2}
+  _body: {fileID: 6212548038177027732}
 --- !u!1 &6212548036439778246
 GameObject:
   m_ObjectHideFlags: 0
@@ -1349,6 +1356,10 @@ PrefabInstance:
       propertyPath: m_Controller
       value: 
       objectReference: {fileID: 9100000, guid: 55a763d43fd6db14aab5ae5f057f71c3, type: 2}
+    - target: {fileID: 13700000, guid: e4299bf26a09e9049839e1a1b75e562c, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 1397a2b0326a93f439eed6fd05489d57, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1357,6 +1368,11 @@ PrefabInstance:
 --- !u!4 &6212548038171322292 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400000, guid: e4299bf26a09e9049839e1a1b75e562c, type: 3}
+  m_PrefabInstance: {fileID: 6212548038171721012}
+  m_PrefabAsset: {fileID: 0}
+--- !u!137 &6212548038177027732 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 13700000, guid: e4299bf26a09e9049839e1a1b75e562c, type: 3}
   m_PrefabInstance: {fileID: 6212548038171721012}
   m_PrefabAsset: {fileID: 0}
 --- !u!95 &6212548038181161044 stripped

@@ -37,18 +37,22 @@ namespace Assets.Scripts.Interactions
 
         private void OnTriggerEnter(Collider other)
         {
+            // 1. IGNORE INVISIBLE VOLUMES (Lighting, fog, wind zones, etc.)
+            if (other.isTrigger) return;
+
+            // 2. IGNORE THE PLAYER AND GUN
+            if (other.CompareTag("Player") || other.transform.root.CompareTag("Player")) return;
+
+            // 3. IF ENEMY, DESTROY IT
             if (other.CompareTag("Enemy"))
             {
                 Destroy(other.gameObject);
             }
 
-            else if (other.CompareTag("Player"))
-            {
-                //var healtController = GetComponent<HealthController>();
-                Debug.Log("Player is being shot");
-            }
+            // 4. Disable our own collider so it physically CANNOT explode 4 times in one frame
+            GetComponent<Collider>().enabled = false;
 
-                DestroyItself();
+            DestroyItself();
         }
     }
 }

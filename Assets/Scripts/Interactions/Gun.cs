@@ -19,7 +19,8 @@ namespace Assets.Scripts.Interactions
         {
             RaycastHit hit;
 
-            if (Physics.Raycast(cameraTransform.position, cameraTransform.forward, out hit, 50f))
+            // We added QueryTriggerInteraction.Ignore so the laser passes through invisible environment boxes!
+            if (Physics.Raycast(cameraTransform.position, cameraTransform.forward, out hit, 50f, Physics.DefaultRaycastLayers, QueryTriggerInteraction.Ignore))
             {
                 firePoint.LookAt(hit.point);
             }

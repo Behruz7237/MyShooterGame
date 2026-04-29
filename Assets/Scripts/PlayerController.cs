@@ -72,7 +72,7 @@ public class PlayerController : MonoBehaviour
         // Move player 
         controller.Move(finalMove * Time.deltaTime);
 
-        Debug.Log("MouseSensiticity" + mouseSensitivity);
+        //Debug.Log("MouseSensiticity" + mouseSensitivity);
         float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
         float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
 

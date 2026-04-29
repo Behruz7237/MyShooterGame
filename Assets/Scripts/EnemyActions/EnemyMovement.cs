@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.AI;
 
 namespace Assets.Scripts.EnemyActions
@@ -21,6 +22,21 @@ namespace Assets.Scripts.EnemyActions
         private bool _chasing;
         private Transform _player;
         private Vector3 _targetPoint, _startPoint;
+        private float speed;
+        private Transform target;
+        private int damage;
+
+        public void Init(float speed, Transform target, int damage)
+        {
+            this.speed = speed;
+            this.target = target;
+            this.damage = damage;
+        }
+
+        internal void Init(float speed, int distance, int materialID)
+        {
+            throw new NotImplementedException();
+        }
 
         private void Start()
         {
