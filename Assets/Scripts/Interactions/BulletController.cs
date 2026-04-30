@@ -49,6 +49,14 @@ namespace Assets.Scripts.Interactions
                 Destroy(other.gameObject);
             }
 
+            // Inside your BulletController's OnTriggerEnter or OnCollisionEnter function:
+
+            VikingHealth viking = other.GetComponent<VikingHealth>();
+            if (viking != null)
+            {
+                viking.TakeDamage(35); // Or whatever damage you want!
+            }
+
             // 4. Disable our own collider so it physically CANNOT explode 4 times in one frame
             GetComponent<Collider>().enabled = false;
 
