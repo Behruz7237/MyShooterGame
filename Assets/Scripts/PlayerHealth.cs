@@ -42,13 +42,19 @@ public class PlayerHealth : MonoBehaviour
         if (currentHealth <= 0) return;
 
         currentHealth -= damage;
+
+        // Ensure health never goes below exactly 0
+        if (currentHealth < 0) currentHealth = 0;
+
         Debug.Log("Player took " + damage + " damage. Current Health: " + currentHealth);
+
+        // Update the UI *before* we handle the death logic!
+        ShowHEalth();
 
         if (currentHealth <= 0)
         {
             Die();
         }
-        ShowHEalth();
     }
 
     private void Die()
@@ -60,11 +66,17 @@ public class PlayerHealth : MonoBehaviour
         {
             playerMovement.enabled = false;
         }
+
+        // Trigger the Valhalla Game Over screen!
+        GameOverManager manager = Object.FindFirstObjectByType<GameOverManager>();
+        if (manager != null) manager.TriggerGameOver();
     }
 
     private void ShowHEalth()
     {
-        if (currentHealth <= 0) return;
+        // Removed the "if (currentHealth <= 0) return;" line!
+        // Now it will actually show 0/100 on the screen!
+
         _healhText.text = currentHealth.ToString() + "/" + maxHealth.ToString();
         _fillTweener?.Kill();
         _fillTweener = _fillImage.DOFillAmount((float)currentHealth / maxHealth, 0.3f);

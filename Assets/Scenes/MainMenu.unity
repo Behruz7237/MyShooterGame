@@ -1113,7 +1113,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 90c7226857eab9046980e5107c9e1fb1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MainMenu
-  gameSceneName: The_Viking_Village
+  gameSceneName: PlayScene
 --- !u!114 &1436955821
 MonoBehaviour:
   m_ObjectHideFlags: 0
