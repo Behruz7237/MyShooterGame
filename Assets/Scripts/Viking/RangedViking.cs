@@ -76,29 +76,39 @@ public class RangedViking : MonoBehaviour
 
     private void SpawnSpear()
     {
+        // 1. IF HE IS DEAD (SCRIPT WAS TURNED OFF), STOP IMMEDIATELY!
+        if (!this.enabled) return;
+
         if (player == null) return;
 
-        // 1. HIDE THE SPEAR IN HIS HAND!
+        // 1. Hide the hand spear
         if (heldSpear != null) heldSpear.SetActive(false);
 
-        // 2. Spawn the flying spear
-        GameObject newSpear = Instantiate(spearPrefab, throwPoint.position, Quaternion.identity);
-
+        // 2. Calculate exactly where we want to throw it
         Vector3 aimTarget = player.position + Vector3.up * 1.5f;
-        newSpear.transform.LookAt(aimTarget);
 
-        // Tilt the spear so the tip faces forward (use 90 or -90 depending on what worked for you!)
-        newSpear.transform.Rotate(-90, 0, 0);
+        // 3. Calculate the direction from the hand to the player
+        Vector3 throwDirection = (aimTarget - throwPoint.position).normalized;
 
-        // Launch it at a dodgeable speed
-        newSpear.GetComponent<Rigidbody>().linearVelocity = newSpear.transform.up * 7f;
+        // 4. Spawn the spear already looking in the exact right direction
+        GameObject newSpear = Instantiate(spearPrefab, throwPoint.position, Quaternion.LookRotation(throwDirection));
 
-        // 3. RELOAD: Give him a new spear in his hand 1 second later!
+        // 5. Fix the tilt of the art so the sharp end points forward. 
+        // Try 90 if -90 points it backward!
+        newSpear.transform.Rotate(90, 0, 0);
+
+        // 6. Push it directly along the throwDirection we calculated earlier!
+        newSpear.GetComponent<Rigidbody>().linearVelocity = throwDirection * 7f;
+
+        // 7. Reload the hand spear
         Invoke("ReloadSpear", 1f);
     }
 
     private void ReloadSpear()
     {
+        // IF HE DIED WHILE WAITING TO RELOAD, DO NOTHING!
+        if (!this.enabled) return;
+
         // Make the hand spear visible again so he is ready for the next attack
         if (heldSpear != null) heldSpear.SetActive(true);
     }

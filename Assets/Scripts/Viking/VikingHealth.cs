@@ -10,26 +10,27 @@ public class VikingHealth : MonoBehaviour
     private Animator animator;
     private NavMeshAgent agent;
     private Collider vikingCollider;
-    private VikingMovement movementScript;
+
+    // We check for BOTH types of Vikings!
+    private VikingMovement meleeScript;
+    private RangedViking rangedScript;
 
     private bool isDead = false;
 
     void Start()
     {
-        // Start with full health
         currentHealth = maxHealth;
 
-        // Grab all the components we need to turn off when he dies
         animator = GetComponent<Animator>();
         agent = GetComponent<NavMeshAgent>();
         vikingCollider = GetComponent<Collider>();
-        movementScript = GetComponent<VikingMovement>();
+
+        meleeScript = GetComponent<VikingMovement>();
+        rangedScript = GetComponent<RangedViking>(); // Finds the new script!
     }
 
-    // Your Gun script will call this function when a bullet hits the Viking
     public void TakeDamage(int damageAmount)
     {
-        // If he's already dead, don't take more damage
         if (isDead) return;
 
         currentHealth -= damageAmount;
@@ -44,20 +45,21 @@ public class VikingHealth : MonoBehaviour
     private void Die()
     {
         isDead = true;
-        Debug.Log("Viking Died!");
 
-        // 1. Play the death animation
+        // 1. Play the Animator "Die" Trigger we set up earlier
         animator.SetTrigger("Die");
 
-        // 2. Turn off the NavMesh and Movement script so he stops chasing you
+        // 2. Turn off the NavMesh so he stops moving
         if (agent != null) agent.enabled = false;
-        if (movementScript != null) movementScript.enabled = false;
 
-        // 3. Turn off the Collider so you can walk over his dead body 
-        // (and so bullets don't hit the invisible ghost of the Viking)
+        // 3. Turn off his brain so he stops swinging axes OR throwing spears!
+        if (meleeScript != null) meleeScript.enabled = false;
+        if (rangedScript != null) rangedScript.enabled = false;
+
+        // 4. Turn off the Collider so you can walk over his body
         if (vikingCollider != null) vikingCollider.enabled = false;
 
-        // 4. Destroy the GameObject after 5 seconds to keep the game running smoothly
+        // 5. Sink into the ground/destroy after 5 seconds to clear memory
         Destroy(gameObject, 5f);
     }
 }

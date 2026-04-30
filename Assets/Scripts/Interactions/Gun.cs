@@ -4,10 +4,10 @@ namespace Assets.Scripts.Interactions
 {
     public class Gun : MonoBehaviour
     {
-        [SerializeField] private BulletController bulletPrefab;
-        [SerializeField] private Transform firePoint;
-        private Transform cameraTransform;
-        private float _bulletVelocity;
+        [SerializeField] protected BulletController bulletPrefab;
+        [SerializeField] protected Transform firePoint;
+        protected Transform cameraTransform;
+        protected float _bulletVelocity;
 
         public void Init(Transform cameraTransform, float velocityBullet)
         {
@@ -15,7 +15,7 @@ namespace Assets.Scripts.Interactions
             _bulletVelocity = velocityBullet;
         }
 
-        public void Shoot()
+        public virtual void Shoot()
         {
             RaycastHit hit;
 

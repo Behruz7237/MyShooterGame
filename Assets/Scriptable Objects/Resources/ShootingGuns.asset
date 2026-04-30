@@ -10,23 +10,23 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 453aaadcbd40d97468fbb15577c604f8, type: 3}
-  m_Name: DefaultGuns
+  m_Name: ShootingGuns
   m_EditorClassIdentifier: Assembly-CSharp::Assets.Scripts.GameAssetsControl.GunContainer
   _guns:
   - _type: 1
-    _gunPrefab: {fileID: 723676383660968637, guid: 9104f69808b353c409a3443c34a5db84, type: 3}
-    _ammo: 1000000
+    _gunPrefab: {fileID: 4730712812799886289, guid: 2ad880c6a72f86946b15ae0e98b43dcb, type: 3}
+    _ammo: 30
     _ammoPackage: 5
-    _fireRate: 5
+    _fireRate: 2
     _velocity: 20
     _damageAmount: 1
     _aimSprite: {fileID: 0}
   - _type: 2
-    _gunPrefab: {fileID: 6614274848181759124, guid: 7076b9c0f617f44409ca1d754e96a393, type: 3}
-    _ammo: 40
-    _ammoPackage: 1
+    _gunPrefab: {fileID: 4780292864474825719, guid: ada8675086591a64fb4fa55419d3639e, type: 3}
+    _ammo: 12
+    _ammoPackage: 3
     _fireRate: 1
-    _velocity: 20
+    _velocity: 10
     _damageAmount: 1
     _aimSprite: {fileID: 0}
   - _type: 3
