@@ -20,7 +20,7 @@ public class FigmaButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     public Color hoverBackgroundColor = new Color(0.85f, 0.65f, 0.35f, 0.1f); // Faint Gold Fill
     public Color hoverOutlineColor = new Color(0.85f, 0.65f, 0.35f, 1f); // Solid Gold Border
 
-    void Start()
+    void OnEnable()
     {
         // Auto-find the components
         if (buttonText == null) buttonText = GetComponentInChildren<TextMeshProUGUI>();

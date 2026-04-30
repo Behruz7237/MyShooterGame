@@ -22029,6 +22029,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 553184142}
+  - component: {fileID: 553184144}
+  - component: {fileID: 553184143}
   m_Layer: 5
   m_Name: GameOverText
   m_TagString: Untagged
@@ -22057,6 +22059,33 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &553184143
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 553184141}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b243a3aaa8978364781b668e34350048, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIScaleAnimation
+  startScale: {x: 0.8, y: 0.8, z: 0.8}
+  duration: 1
+  delay: 0.2
+--- !u!225 &553184144
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 553184141}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &555228290
 GameObject:
   m_ObjectHideFlags: 0
@@ -31012,6 +31041,7 @@ GameObject:
   - component: {fileID: 762547281}
   - component: {fileID: 762547280}
   - component: {fileID: 762547279}
+  - component: {fileID: 762547283}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -31105,6 +31135,19 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!114 &762547283
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 762547278}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4c9f102c4d34ff7409fc6cc9be1fe808, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GameOverManager
+  gameOverUI: {fileID: 2131165243}
 --- !u!1001 &763376594
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -41282,6 +41325,9 @@ GameObject:
   - component: {fileID: 992918922}
   - component: {fileID: 992918924}
   - component: {fileID: 992918923}
+  - component: {fileID: 992918925}
+  - component: {fileID: 992918927}
+  - component: {fileID: 992918926}
   m_Layer: 5
   m_Name: MenuButton
   m_TagString: Untagged
@@ -41328,7 +41374,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 0
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
@@ -41353,7 +41399,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2131165247}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: GameOverManager, Assembly-CSharp
         m_MethodName: ClickReturnToMenu
         m_Mode: 1
@@ -41373,6 +41419,72 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 992918921}
   m_CullTransparentMesh: 1
+--- !u!114 &992918925
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 992918921}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0a96308f7c65f384e9079f688e7eaa31, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FigmaButton
+  buttonText: {fileID: 1927762779}
+  buttonBackground: {fileID: 0}
+  buttonOutline: {fileID: 0}
+  defaultTextColor: {r: 0.65882355, g: 0.65882355, b: 0.65882355, a: 1}
+  defaultBackgroundColor: {r: 0.011764707, g: 0.007843138, b: 0.007843138, a: 1}
+  defaultOutlineColor: {r: 0.011764707, g: 0.003921569, b: 0.003921569, a: 1}
+  hoverTextColor: {r: 0.86274517, g: 0.79215693, b: 0.6627451, a: 1}
+  hoverBackgroundColor: {r: 0.007843138, g: 0, b: 0, a: 1}
+  hoverOutlineColor: {r: 0.21568629, g: 0.21568629, b: 0.21568629, a: 1}
+--- !u!114 &992918926
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 992918921}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e19747de3f5aca642ab2be37e372fb86, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Outline
+  m_EffectColor: {r: 0, g: 0, b: 0, a: 0.5}
+  m_EffectDistance: {x: 1, y: -1}
+  m_UseGraphicAlpha: 1
+--- !u!114 &992918927
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 992918921}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 0}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
 --- !u!1001 &994188637
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -45721,14 +45833,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 0, b: 0, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -54929,6 +55041,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1347061495}
+  - component: {fileID: 1347061497}
+  - component: {fileID: 1347061496}
   m_Layer: 5
   m_Name: GameOverButtons
   m_TagString: Untagged
@@ -54962,6 +55076,33 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1347061496
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1347061494}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe016bf10a57c434ba52141090c520c1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UISlideAnimation
+  startOffset: {x: 0, y: -150}
+  duration: 1
+  delay: 0.6
+--- !u!225 &1347061497
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1347061494}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!4 &1347165377 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4829004042300518, guid: 215a971f0f2e59047bf9b5991ec49964, type: 3}
@@ -79741,6 +79882,7 @@ GameObject:
   - component: {fileID: 1992633535}
   - component: {fileID: 1992633538}
   - component: {fileID: 1992633537}
+  - component: {fileID: 1992633539}
   m_Layer: 5
   m_Name: ResurrectButton
   m_TagString: Untagged
@@ -79825,7 +79967,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 0
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
@@ -79850,7 +79992,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2131165247}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: GameOverManager, Assembly-CSharp
         m_MethodName: ClickResurrect
         m_Mode: 1
@@ -79877,6 +80019,27 @@ MonoBehaviour:
   m_EffectColor: {r: 1, g: 0.8431373, b: 0, a: 1}
   m_EffectDistance: {x: 1, y: -1}
   m_UseGraphicAlpha: 1
+--- !u!114 &1992633539
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1992633533}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0a96308f7c65f384e9079f688e7eaa31, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FigmaButton
+  buttonText: {fileID: 1794310839}
+  buttonBackground: {fileID: 1992633535}
+  buttonOutline: {fileID: 1992633538}
+  defaultTextColor: {r: 0.9921569, g: 0.8588236, b: 0, a: 1}
+  defaultBackgroundColor: {r: 0.23137257, g: 0.054901965, b: 0.054901965, a: 1}
+  defaultOutlineColor: {r: 0.42352945, g: 0, b: 0, a: 1}
+  hoverTextColor: {r: 0.98823535, g: 0.83921576, b: 0, a: 1}
+  hoverBackgroundColor: {r: 0.54509807, g: 0, b: 0, a: 1}
+  hoverOutlineColor: {r: 0.909804, g: 0.21568629, b: 0, a: 1}
 --- !u!1001 &1993243689
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -86003,15 +86166,13 @@ GameObject:
   - component: {fileID: 2131165244}
   - component: {fileID: 2131165246}
   - component: {fileID: 2131165245}
-  - component: {fileID: 2131165248}
-  - component: {fileID: 2131165247}
   m_Layer: 5
   m_Name: GameOverCanvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &2131165244
 RectTransform:
   m_ObjectHideFlags: 0
@@ -86072,40 +86233,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2131165243}
   m_CullTransparentMesh: 1
---- !u!114 &2131165247
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2131165243}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4c9f102c4d34ff7409fc6cc9be1fe808, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::GameOverManager
-  gameOverUI: {fileID: 2131165243}
---- !u!114 &2131165248
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2131165243}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0a96308f7c65f384e9079f688e7eaa31, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::FigmaButton
-  buttonText: {fileID: 0}
-  buttonBackground: {fileID: 0}
-  buttonOutline: {fileID: 0}
-  defaultTextColor: {r: 1, g: 1, b: 1, a: 1}
-  defaultBackgroundColor: {r: 0, g: 0, b: 0, a: 0.4}
-  defaultOutlineColor: {r: 0.5, g: 0.5, b: 0.5, a: 0.5}
-  hoverTextColor: {r: 0.85, g: 0.65, b: 0.35, a: 1}
-  hoverBackgroundColor: {r: 0.85, g: 0.65, b: 0.35, a: 0.1}
-  hoverOutlineColor: {r: 0.85, g: 0.65, b: 0.35, a: 1}
 --- !u!1001 &2132503424
 PrefabInstance:
   m_ObjectHideFlags: 0
