@@ -1,4 +1,4 @@
-﻿using Assets.Scripts.GameAssetsControl;
+using Assets.Scripts.GameAssetsControl;
 using Assets.Scripts.Interactions;
 using DG.Tweening;
 using System;
@@ -20,7 +20,7 @@ namespace Assets.Scripts.Player
         private List<GunItem> _availableGuns = new List<GunItem>();
 
         public event Action<int> OnGunChanged;
-        private Tweener _waitTweener;
+        private Tween _waitTweener;
 
         private void Awake()
         {
@@ -87,6 +87,7 @@ namespace Assets.Scripts.Player
             if (_currentGunID >= _instantiatedGuns.Count) _currentGunID = 0;
             _currentGun = _instantiatedGuns[_currentGunID];
             _currentGun.gameObject.SetActive(true);
+            GunChanged(_availableGuns[_currentGunID]);
         }
 
         private void GunChanged(GunItem gun)
@@ -98,7 +99,7 @@ namespace Assets.Scripts.Player
         {
             _animator.SetTrigger(GameConstants.GunHideTrigger);
             _waitTweener?.Kill();
-            _waitTweener = transform.DOMoveX(0.1f, 0.5f).OnComplete(() =>
+            _waitTweener = DOVirtual.DelayedCall(0.5f, () =>
             {
                 changingAction?.Invoke();
                 _animator.SetTrigger(GameConstants.GunShowTrigger);

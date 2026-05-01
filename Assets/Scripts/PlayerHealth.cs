@@ -46,6 +46,9 @@ public class PlayerHealth : MonoBehaviour
         // Ensure health never goes below exactly 0
         if (currentHealth < 0) currentHealth = 0;
 
+        // Flash the red vignette effect!
+        if (DamageVignette.Instance != null) DamageVignette.Instance.Flash();
+
         Debug.Log("Player took " + damage + " damage. Current Health: " + currentHealth);
 
         // Update the UI *before* we handle the death logic!

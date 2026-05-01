@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using UnityEngine;
 
 namespace Assets.Scripts.Interactions
@@ -46,6 +46,7 @@ namespace Assets.Scripts.Interactions
             // 3. IF ENEMY, DESTROY IT
             if (other.CompareTag("Enemy"))
             {
+                GameOverManager.AddKill();
                 Destroy(other.gameObject);
             }
 

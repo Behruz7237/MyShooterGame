@@ -46,6 +46,9 @@ public class VikingHealth : MonoBehaviour
     {
         isDead = true;
 
+        // Count this kill for the Game Over stats!
+        GameOverManager.AddKill();
+
         // 1. Play the Animator "Die" Trigger we set up earlier
         animator.SetTrigger("Die");
 
