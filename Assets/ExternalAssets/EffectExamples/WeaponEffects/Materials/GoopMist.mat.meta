@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: a874d407782aa084bb60f3a8477fad4b
+timeCreated: 1473942560
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 127325
+  packageName: Particle Pack
+  packageVersion: 3.1
+  assetPath: Assets/ExternalAssets/EffectExamples/WeaponEffects/Materials/GoopMist.mat
+  uploadId: 896138

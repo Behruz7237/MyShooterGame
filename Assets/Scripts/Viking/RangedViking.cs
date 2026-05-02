@@ -6,7 +6,8 @@ public class RangedViking : MonoBehaviour
     private Transform player;
 
     [Header("Movement")]
-    public float throwDistance = 5f;
+    public float visionDistance = 20f;  // <--- NEW: How close before he notices you!
+    public float throwDistance = 10f;   // How close he gets before throwing
     public float runSpeed = 3.5f;
 
     [Header("Combat")]
@@ -15,11 +16,12 @@ public class RangedViking : MonoBehaviour
     public Transform throwPoint;     // Where the flying spear spawns
 
     public float throwCooldown = 3f;
-    public float spearSpawnDelay = 0.2f; // Adjust this to match the exact throw frame!
+    public float spearSpawnDelay = 0.2f;
 
     private float lastThrowTime;
     private Animator animator;
     private NavMeshAgent agent;
+    private bool isAggro = false; // <--- NEW: Keeps track of if he has seen the player
 
     void Start()
     {
@@ -29,7 +31,6 @@ public class RangedViking : MonoBehaviour
         agent.speed = runSpeed;
         agent.stoppingDistance = throwDistance;
 
-        // Make sure he starts holding the spear!
         if (heldSpear != null) heldSpear.SetActive(true);
 
         GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
@@ -41,6 +42,17 @@ public class RangedViking : MonoBehaviour
         if (player == null) return;
 
         float distance = Vector3.Distance(transform.position, player.position);
+
+        // 1. IS THE PLAYER FAR AWAY? (Stand Idle)
+        if (distance > visionDistance && !isAggro)
+        {
+            agent.isStopped = true;
+            animator.SetFloat("Speed", 0f);
+            return;
+        }
+
+        // Player crossed the line! Wake up and stay mad!
+        isAggro = true;
 
         if (distance > throwDistance)
         {
@@ -68,7 +80,6 @@ public class RangedViking : MonoBehaviour
             {
                 animator.SetTrigger("Throw");
                 lastThrowTime = Time.time;
-
                 Invoke("SpawnSpear", spearSpawnDelay);
             }
         }
@@ -76,40 +87,34 @@ public class RangedViking : MonoBehaviour
 
     private void SpawnSpear()
     {
-        // 1. IF HE IS DEAD (SCRIPT WAS TURNED OFF), STOP IMMEDIATELY!
         if (!this.enabled) return;
-
         if (player == null) return;
 
-        // 1. Hide the hand spear
         if (heldSpear != null) heldSpear.SetActive(false);
 
-        // 2. Calculate exactly where we want to throw it
         Vector3 aimTarget = player.position + Vector3.up * 1.5f;
-
-        // 3. Calculate the direction from the hand to the player
         Vector3 throwDirection = (aimTarget - throwPoint.position).normalized;
 
-        // 4. Spawn the spear already looking in the exact right direction
         GameObject newSpear = Instantiate(spearPrefab, throwPoint.position, Quaternion.LookRotation(throwDirection));
-
-        // 5. Fix the tilt of the art so the sharp end points forward. 
-        // Try 90 if -90 points it backward!
         newSpear.transform.Rotate(90, 0, 0);
+        newSpear.GetComponent<Rigidbody>().linearVelocity = throwDirection * 15f; // Adjust spear flight speed here!
 
-        // 6. Push it directly along the throwDirection we calculated earlier!
-        newSpear.GetComponent<Rigidbody>().linearVelocity = throwDirection * 7f;
-
-        // 7. Reload the hand spear
         Invoke("ReloadSpear", 1f);
     }
 
     private void ReloadSpear()
     {
-        // IF HE DIED WHILE WAITING TO RELOAD, DO NOTHING!
         if (!this.enabled) return;
-
-        // Make the hand spear visible again so he is ready for the next attack
         if (heldSpear != null) heldSpear.SetActive(true);
+    }
+
+    // Draw the Vision (Yellow) and Throw (Red) circles in the Scene view
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(transform.position, visionDistance);
+
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, throwDistance);
     }
 }

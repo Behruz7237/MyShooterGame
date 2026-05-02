@@ -30,7 +30,7 @@ MonoBehaviour:
     _damageAmount: 1
     _aimSprite: {fileID: 0}
   - _type: 3
-    _gunPrefab: {fileID: 8927542243860672594, guid: 083028fedec644c4398f5e0d5c47e327, type: 3}
+    _gunPrefab: {fileID: 413731159109193445, guid: b6b4d91bd79034d4cb758f873c2e2690, type: 3}
     _ammo: 50
     _ammoPackage: 1
     _fireRate: 8

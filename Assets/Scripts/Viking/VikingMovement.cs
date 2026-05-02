@@ -6,18 +6,19 @@ public class VikingMovement : MonoBehaviour
     private Transform player;
 
     [Header("Settings")]
+    public float visionDistance = 20f;  // <--- NEW: How close before he notices you!
     public float attackDistance = 2f;
     public float runSpeed = 3.5f;
 
     [Header("Combat")]
     public float attackCooldown = 1.5f;
-    public int axeDamage = 10;          // <--- NEW: He deals 10 damage!
-    public float damageDelay = 0.5f;    // <--- NEW: Wait 0.5s for the axe to physically swing before dealing damage
+    public int axeDamage = 10;
+    public float damageDelay = 0.5f;
 
     private float lastAttackTime;
-
     private Animator animator;
     private NavMeshAgent agent;
+    private bool isAggro = false; // Keeps track of if he has seen the player yet
 
     void Start()
     {
@@ -37,12 +38,25 @@ public class VikingMovement : MonoBehaviour
 
         float distance = Vector3.Distance(transform.position, player.position);
 
+        // 1. IS THE PLAYER FAR AWAY? (Stand Idle)
+        if (distance > visionDistance && !isAggro)
+        {
+            agent.isStopped = true;
+            animator.SetFloat("Speed", 0f);
+            return; // Stop running the rest of the Update code
+        }
+
+        // Once the player crosses the line, the Viking stays aggressive!
+        isAggro = true;
+
+        // 2. CHASE THE PLAYER
         if (distance > attackDistance)
         {
             agent.isStopped = false;
             agent.SetDestination(player.position);
             animator.SetFloat("Speed", 1f);
         }
+        // 3. ATTACK THE PLAYER
         else
         {
             agent.isStopped = true;
@@ -59,8 +73,6 @@ public class VikingMovement : MonoBehaviour
             {
                 animator.SetTrigger("Attack");
                 lastAttackTime = Time.time;
-
-                // NEW: Trigger the damage exactly when the axe swings down!
                 Invoke("DealAxeDamage", damageDelay);
             }
         }
@@ -68,19 +80,26 @@ public class VikingMovement : MonoBehaviour
 
     private void DealAxeDamage()
     {
-        // 1. If the Viking died during the swing, cancel the attack!
         if (!this.enabled || player == null) return;
 
-        // 2. Did the player run away before the axe landed? 
         float currentDistance = Vector3.Distance(transform.position, player.position);
         if (currentDistance <= attackDistance + 0.5f)
         {
-            // 3. Player is still in range, deal 10 damage!
             PlayerHealth playerHP = player.GetComponent<PlayerHealth>();
             if (playerHP != null)
             {
                 playerHP.TakeDamage(axeDamage);
             }
         }
+    }
+
+    // Optional: Draw a visual circle in the Scene view so you know exactly where the village borders are!
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(transform.position, visionDistance);
+
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, attackDistance);
     }
 }
