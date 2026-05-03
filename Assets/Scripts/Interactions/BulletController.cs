@@ -37,25 +37,28 @@ namespace Assets.Scripts.Interactions
 
         private void OnTriggerEnter(Collider other)
         {
-            // 1. IGNORE INVISIBLE VOLUMES (Lighting, fog, wind zones, etc.)
+            // 1. IGNORE INVISIBLE VOLUMES
             if (other.isTrigger) return;
 
             // 2. IGNORE THE PLAYER AND GUN
             if (other.CompareTag("Player") || other.transform.root.CompareTag("Player")) return;
 
-            // 3. IF ENEMY, DESTROY IT
+            // 3. DEAL DAMAGE INSTEAD OF INSTANTLY DESTROYING
             if (other.CompareTag("Enemy"))
             {
-                GameOverManager.AddKill();
-                Destroy(other.gameObject);
-            }
+                // Check if it's a Viking
+                VikingHealth viking = other.GetComponent<VikingHealth>();
+                if (viking != null)
+                {
+                    viking.TakeDamage(35); // Viking takes 35 damage
+                }
 
-            // Inside your BulletController's OnTriggerEnter or OnCollisionEnter function:
-
-            VikingHealth viking = other.GetComponent<VikingHealth>();
-            if (viking != null)
-            {
-                viking.TakeDamage(35); // Or whatever damage you want!
+                // Check if it's the Mutant Boss
+                MutantBossController boss = other.GetComponent<MutantBossController>();
+                if (boss != null)
+                {
+                    boss.TakeDamage(35); // Boss takes 35 damage
+                }
             }
 
             // 4. Disable our own collider so it physically CANNOT explode 4 times in one frame

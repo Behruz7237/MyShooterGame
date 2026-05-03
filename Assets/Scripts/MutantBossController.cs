@@ -1,4 +1,6 @@
 using UnityEngine;
+using UnityEngine.UI; // Needed for the Health Bar
+using DG.Tweening;    // Needed for the smooth shrinking animation!
 
 public class MutantBossController : MonoBehaviour
 {
@@ -7,11 +9,19 @@ public class MutantBossController : MonoBehaviour
     private int currentHealth;
     private bool isDead = false;
 
+    [Header("Boss UI")]
+    public GameObject bossHealthUI;     // The Canvas that holds the health bar
+    public Image healthFillImage;       // The Red Fill Image
+
+    [Header("Animation Settings")]
+    [Range(0.1f, 1f)]
+    public float animationSpeed = 0.6f;
+
     [Header("Combat Settings")]
-    public float punchDistance = 4f;    // How close you must be for him to punch
-    public float punchCooldown = 2.5f;  // Seconds between punches
-    public int punchDamage = 25;        // How much health he takes from you
-    public float damageDelay = 0.6f;    // Delay to match the physical punch swinging
+    public float punchDistance = 4f;
+    public float punchCooldown = 3f;
+    public int punchDamage = 25;
+    public float damageDelay = 1.2f;
 
     private float lastPunchTime;
     private Animator animator;
@@ -22,22 +32,24 @@ public class MutantBossController : MonoBehaviour
         currentHealth = maxHealth;
         animator = GetComponent<Animator>();
 
-        // Find the player automatically
+        if (animator != null) animator.speed = animationSpeed;
+
         GameObject p = GameObject.FindGameObjectWithTag("Player");
         if (p != null) player = p.transform;
+
+        // When the Boss wakes up, turn on his epic health bar!
+        if (bossHealthUI != null) bossHealthUI.SetActive(true);
+        if (healthFillImage != null) healthFillImage.fillAmount = 1f;
     }
 
     void Update()
     {
         if (isDead || player == null) return;
 
-        // How far is the player?
         float distance = Vector3.Distance(transform.position, player.position);
 
-        // If the player gets too close, PUNCH!
         if (distance <= punchDistance)
         {
-            // Turn to face the player while punching
             Vector3 lookDirection = (player.position - transform.position).normalized;
             lookDirection.y = 0;
             if (lookDirection != Vector3.zero)
@@ -45,13 +57,10 @@ public class MutantBossController : MonoBehaviour
                 transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(lookDirection), Time.deltaTime * 5f);
             }
 
-            // Check if enough time has passed since the last punch
             if (Time.time >= lastPunchTime + punchCooldown)
             {
                 animator.SetTrigger("Punch");
                 lastPunchTime = Time.time;
-
-                // Deal damage exactly when the fist hits the player
                 Invoke("DealPunchDamage", damageDelay);
             }
         }
@@ -61,7 +70,6 @@ public class MutantBossController : MonoBehaviour
     {
         if (isDead || player == null) return;
 
-        // Make sure the player didn't dodge away!
         float currentDistance = Vector3.Distance(transform.position, player.position);
         if (currentDistance <= punchDistance + 1f)
         {
@@ -73,13 +81,18 @@ public class MutantBossController : MonoBehaviour
         }
     }
 
-    // Your bullets will call this function!
     public void TakeDamage(int damageAmount)
     {
         if (isDead) return;
 
         currentHealth -= damageAmount;
-        Debug.Log("Boss took damage! HP left: " + currentHealth);
+        if (currentHealth < 0) currentHealth = 0;
+
+        // Smoothly shrink the red health bar over 0.3 seconds!
+        if (healthFillImage != null)
+        {
+            healthFillImage.DOFillAmount((float)currentHealth / maxHealth, 0.3f);
+        }
 
         if (currentHealth <= 0)
         {
@@ -90,22 +103,18 @@ public class MutantBossController : MonoBehaviour
     private void Die()
     {
         isDead = true;
-
-        // Play the death animation
+        animator.ResetTrigger("Punch");
         animator.SetTrigger("Die");
 
-        // Turn off his collider so the player can walk over his giant body
+        // Turn off the health bar when he dies!
+        if (bossHealthUI != null) bossHealthUI.SetActive(false);
+
         Collider bossCollider = GetComponent<Collider>();
         if (bossCollider != null) bossCollider.enabled = false;
 
-        // Destroy his body after 10 seconds to free up memory
         Destroy(gameObject, 10f);
-
-        Debug.Log("YOU DEFEATED THE BOSS!");
-        // (If you have a WinManager, you can call it here!)
     }
 
-    // Draws a red circle to show his punch range in the Scene view
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.red;
