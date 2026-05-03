@@ -26,6 +26,8 @@ public class MutantBossController : MonoBehaviour
     private float lastPunchTime;
     private Animator animator;
     private Transform player;
+    private bool isAttacking = false;
+
 
     void Start()
     {
@@ -48,7 +50,8 @@ public class MutantBossController : MonoBehaviour
 
         float distance = Vector3.Distance(transform.position, player.position);
 
-        if (distance <= punchDistance)
+        // Only rotate and start an attack if we are close enough and NOT already attacking
+        if (distance <= punchDistance && !isAttacking)
         {
             Vector3 lookDirection = (player.position - transform.position).normalized;
             lookDirection.y = 0;
@@ -59,11 +62,29 @@ public class MutantBossController : MonoBehaviour
 
             if (Time.time >= lastPunchTime + punchCooldown)
             {
-                animator.SetTrigger("Punch");
-                lastPunchTime = Time.time;
-                Invoke("DealPunchDamage", damageDelay);
+                StartCoroutine(AttackRoutine(lookDirection, distance));
             }
         }
+    }
+
+    private System.Collections.IEnumerator AttackRoutine(Vector3 lookDirection, float currentDistance)
+    {
+        isAttacking = true;
+        animator.SetTrigger("Punch");
+        lastPunchTime = Time.time;
+
+        // Wait for the exact moment the slice hits the player
+        yield return new WaitForSeconds(damageDelay);
+        DealPunchDamage();
+
+        // To ensure the boss does the "slicing animation till the end before he starts the next one",
+        // we enforce a strict waiting period. Giant animations played slowly (0.4x speed) take a long time!
+        float finishWaitTime = punchCooldown - damageDelay;
+        if (finishWaitTime < 3.5f) finishWaitTime = 3.5f; // Force a minimum 3.5s finish time to prevent clipping
+
+        yield return new WaitForSeconds(finishWaitTime);
+
+        isAttacking = false;
     }
 
     private void DealPunchDamage()
@@ -112,7 +133,16 @@ public class MutantBossController : MonoBehaviour
         Collider bossCollider = GetComponent<Collider>();
         if (bossCollider != null) bossCollider.enabled = false;
 
+        // Delay Victory UI!
+        Invoke("ShowVictoryUI", 7f);
+
         Destroy(gameObject, 10f);
+    }
+
+    private void ShowVictoryUI()
+    {
+        GameOverManager manager = Object.FindFirstObjectByType<GameOverManager>();
+        if (manager != null) manager.TriggerVictory("RAGNAROK");
     }
 
     private void OnDrawGizmosSelected()

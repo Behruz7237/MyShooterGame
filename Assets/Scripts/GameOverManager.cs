@@ -1,6 +1,7 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using DG.Tweening;
 
 public class GameOverManager : MonoBehaviour
 {
@@ -91,6 +92,39 @@ public class GameOverManager : MonoBehaviour
 
         // Optional: Freeze the game time
         // Time.timeScale = 0f; 
+    }
+
+    public void TriggerVictory(string victoryWord = "RAGNAROK")
+    {
+        TriggerGameOver();
+        
+        if (gameOverUI != null)
+        {
+            foreach (TMP_Text t in gameOverUI.GetComponentsInChildren<TMP_Text>(true))
+            {
+                if (t.gameObject.name == "TitleText") 
+                { 
+                    t.text = victoryWord;
+                    t.color = Color.red; // RAGNAROK in red!
+                    
+                    // Animate from zero scale with a fade
+                    t.transform.localScale = Vector3.zero;
+                    t.alpha = 0f;
+                    t.DOFade(1f, 1.2f).SetUpdate(true);
+                    t.transform.DOScale(Vector3.one, 1.2f).SetEase(Ease.OutBack).SetUpdate(true);
+                }
+                else if (t.gameObject.name == "SubtitleText")
+                {
+                    t.text = "YOU HAVE AVERTED";
+                    
+                    // Animate subtitle with a delay
+                    t.transform.localScale = Vector3.zero;
+                    t.alpha = 0f;
+                    t.DOFade(1f, 1.2f).SetDelay(0.8f).SetUpdate(true);
+                    t.transform.DOScale(Vector3.one, 1.2f).SetEase(Ease.OutBack).SetDelay(0.8f).SetUpdate(true);
+                }
+            }
+        }
     }
 
     public void ClickResurrect()

@@ -69,23 +69,25 @@ public class VillageManager : MonoBehaviour
         {
             cinematicText.gameObject.SetActive(true);
 
-            SlamWord("RAGNAROK");
-            yield return new WaitForSeconds(1f);
+            float interval = 1.5f;
 
-            SlamWord("BEGINS");
-            yield return new WaitForSeconds(1f);
+            SlamWord("RAGNAROK", interval);
+            yield return new WaitForSeconds(interval);
 
-            SlamWord("IN...");
-            yield return new WaitForSeconds(1f);
+            SlamWord("BEGINS", interval);
+            yield return new WaitForSeconds(interval);
 
-            SlamWord("3");
-            yield return new WaitForSeconds(1f);
+            SlamWord("IN...", interval);
+            yield return new WaitForSeconds(interval);
 
-            SlamWord("2");
-            yield return new WaitForSeconds(1f);
+            SlamWord("3", interval);
+            yield return new WaitForSeconds(interval);
 
-            SlamWord("1");
-            yield return new WaitForSeconds(1f);
+            SlamWord("2", interval);
+            yield return new WaitForSeconds(interval);
+
+            SlamWord("1", interval);
+            yield return new WaitForSeconds(interval);
 
             cinematicText.text = "";
             cinematicText.gameObject.SetActive(false);
@@ -98,11 +100,35 @@ public class VillageManager : MonoBehaviour
         }
     }
 
-    private void SlamWord(string word)
+    private void SlamWord(string word, float duration = 1f)
     {
         cinematicText.text = word;
 
-        cinematicText.transform.localScale = Vector3.one * 5f;
-        cinematicText.transform.DOScale(Vector3.one, 0.4f).SetEase(Ease.OutBounce);
+        // Force the text to be perfectly centered on the screen
+        cinematicText.alignment = TextAlignmentOptions.Center;
+        RectTransform rect = cinematicText.GetComponent<RectTransform>();
+        if (rect != null)
+        {
+            rect.anchorMin = new Vector2(0.5f, 0.5f);
+            rect.anchorMax = new Vector2(0.5f, 0.5f);
+            rect.pivot = new Vector2(0.5f, 0.5f);
+            rect.anchoredPosition = Vector2.zero;
+        }
+
+        cinematicText.transform.DOKill();
+        cinematicText.transform.localPosition = Vector3.zero; // Reset position
+        cinematicText.transform.localEulerAngles = Vector3.zero;
+
+        // Ominous heavy slam: starts huge, smashes down, then slowly creeps forward like a giant approaching
+        cinematicText.transform.localScale = Vector3.one * 8f;
+        
+        cinematicText.transform.DOScale(Vector3.one * 1.5f, 0.15f).SetEase(Ease.InExpo).OnComplete(() =>
+        {
+            // Simulate a massive, heavy footstep shaking the screen
+            cinematicText.transform.DOPunchPosition(new Vector3(0, -30f, 0), 0.4f, 10, 0.5f);
+            
+            // Slowly creep closer to the camera to build tension before the next word
+            cinematicText.transform.DOScale(Vector3.one * 2.2f, duration - 0.15f).SetEase(Ease.Linear);
+        });
     }
 }
