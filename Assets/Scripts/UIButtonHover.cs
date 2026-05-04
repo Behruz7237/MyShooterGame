@@ -1,17 +1,31 @@
 using UnityEngine;
-using TMPro; // For TextMeshPro
-using UnityEngine.EventSystems; // For detecting hovers
+using TMPro;
+using UnityEngine.EventSystems;
 
-public class UIButtonHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+[RequireComponent(typeof(AudioSource))]
+public class UIButtonHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
 {
     public TextMeshProUGUI buttonText;
 
     [Header("Hover Settings")]
     public Color normalColor = Color.white;
-    public Color hoverColor = new Color(1f, 0.9f, 0.2f); // That slight yellow!
-    public float hoverSizeMultiplier = 1.1f; // Makes text 10% bigger on hover
+    public Color hoverColor = new Color(1f, 0.9f, 0.2f);
+    public float hoverSizeMultiplier = 1.1f;
+
+    [Header("Audio")]
+    public AudioClip hoverSound;
+    public AudioClip clickSound;
+    private AudioSource audioSource;
 
     private Vector3 originalScale;
+
+    void Awake()
+    {
+        audioSource = GetComponent<AudioSource>();
+        if (audioSource == null) audioSource = gameObject.AddComponent<AudioSource>();
+        audioSource.playOnAwake = false;
+        audioSource.spatialBlend = 0f; // 2D sound
+    }
 
     void Start()
     {
@@ -20,17 +34,27 @@ public class UIButtonHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
         buttonText.color = normalColor;
     }
 
-    // When the mouse enters the button (Figma Hover State)
     public void OnPointerEnter(PointerEventData eventData)
     {
         buttonText.color = hoverColor;
         buttonText.transform.localScale = originalScale * hoverSizeMultiplier;
+        if (hoverSound != null && audioSource != null)
+        {
+            audioSource.PlayOneShot(hoverSound);
+        }
     }
 
-    // When the mouse leaves the button (Figma Default State)
     public void OnPointerExit(PointerEventData eventData)
     {
         buttonText.color = normalColor;
         buttonText.transform.localScale = originalScale;
+    }
+
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        if (clickSound != null && audioSource != null)
+        {
+            audioSource.PlayOneShot(clickSound);
+        }
     }
 }
