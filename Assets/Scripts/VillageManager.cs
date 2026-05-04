@@ -7,7 +7,10 @@ using DG.Tweening;
 public class VillageManager : MonoBehaviour
 {
     [Header("Village Setup")]
-    public List<VikingHealth> villageVikings;
+    [Tooltip("Drag ANY specific enemy GameObjects here. The cinematic plays when all these are destroyed.")]
+    public List<GameObject> enemiesToDefeat;
+    private bool hasTriggeredCinematic = false;
+    
     public GameObject bossMutant;
 
     [Header("Cinematic Settings")]
@@ -27,15 +30,28 @@ public class VillageManager : MonoBehaviour
         if (cinematicText != null) cinematicText.gameObject.SetActive(false);
     }
 
-    public void ReportDeath(VikingHealth deadViking)
+    void Update()
     {
-        if (villageVikings.Contains(deadViking))
+        if (hasTriggeredCinematic) return;
+
+        // If the list is empty or hasn't been set up yet, do nothing.
+        if (enemiesToDefeat == null || enemiesToDefeat.Count == 0) return;
+
+        bool allDead = true;
+        foreach (GameObject enemy in enemiesToDefeat)
         {
-            villageVikings.Remove(deadViking);
+            // If any enemy in the list still exists in the world, they are not all dead yet!
+            if (enemy != null)
+            {
+                allDead = false;
+                break;
+            }
         }
 
-        if (villageVikings.Count == 0)
+        // If every single enemy in the list is null (destroyed), trigger the boss!
+        if (allDead)
         {
+            hasTriggeredCinematic = true;
             StartCoroutine(CinematicRoutine());
         }
     }

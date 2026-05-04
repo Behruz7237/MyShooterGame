@@ -46,10 +46,7 @@ public class VikingHealth : MonoBehaviour
     {
         isDead = true;
 
-        // --- NEW: Tell the Village Manager we died! ---
-        VillageManager manager = FindAnyObjectByType<VillageManager>();
-        if (manager != null) manager.ReportDeath(this);
-        // ----------------------------------------------
+        // --- The Village Manager now tracks death automatically! ---
 
         // Count this kill for the Game Over stats!
         GameOverManager.AddKill();
