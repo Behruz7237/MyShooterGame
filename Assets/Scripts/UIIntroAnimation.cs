@@ -6,7 +6,7 @@ public class UIIntroAnimation : MonoBehaviour
     [Header("Animation Settings")]
     [Tooltip("How far it moves from its starting point. (e.g., Y = 200 means it starts 200 pixels UP)")]
     public Vector2 startOffset = new Vector2(0, 200f);
-    public float duration = 1.2f; // How long the animation lasts
+    public float duration = 1.5f; // How long the animation lasts
     public float delay = 0f;      // Wait a moment before starting
 
     private RectTransform rectTransform;
