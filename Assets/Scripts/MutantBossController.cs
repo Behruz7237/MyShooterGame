@@ -25,6 +25,17 @@ public class MutantBossController : MonoBehaviour
 
     [Header("Epic Attack Effects")]
     public GameObject wildFirePrefab; // Drag the fire prefab here
+    public GameObject footstepSplashPrefab; // (Optional) Drag a realistic splash prefab from the Asset Store here!
+    public GameObject massiveJumpSplashPrefab; // (Optional) Drag a massive jump splash prefab here!
+    
+    [Header("Splash Adjustments")]
+    public float footstepSplashScale = 7.5f; // Half scale as requested
+    public float jumpSplashScale = 20f;      // Half scale as requested
+    public float splashForwardOffset = 8f;   // Spawns the splash near his toes instead of his center
+    public float footstepDistance = 15f;     // Boss strides are huge, this prevents a spammed trail
+    public float splashSimulationSpeed = 0.5f; // Slows down particles to give that heavy, epic sense of scale
+    public float deathSplashDelay = 2.5f;    // Tweak this so it erupts EXACTLY when he touches the ground
+
     public int jumpAttackDamage = 40;
     public int fireDamagePerSecond = 10;
 
@@ -36,12 +47,17 @@ public class MutantBossController : MonoBehaviour
     private bool hasDoneSwipeEffect = false;
     private bool hasDoneJumpEffect = false;
     private bool hasDoneRoarEffect = false;
+    private bool hasDoneTurnSplash = false;
 
+
+    // Water Splash Tracking
+    private Vector3 lastSplashPosition;
 
     void Start()
     {
         currentHealth = maxHealth;
         animator = GetComponent<Animator>();
+        lastSplashPosition = transform.position;
 
         if (animator != null) animator.speed = animationSpeed;
 
@@ -56,6 +72,26 @@ public class MutantBossController : MonoBehaviour
     void Update()
     {
         if (isDead || player == null) return;
+
+        AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
+
+        // --- DYNAMIC WATER SPLASHES FOR WALKING ---
+        // Trigger splashes less frequently and spawn them forward at his toes so they don't lag behind!
+        if (!stateInfo.IsName("Mutant Idle") && Vector3.Distance(transform.position, lastSplashPosition) > footstepDistance)
+        {
+            Vector3 splashSpawnPos = transform.position + (transform.forward * splashForwardOffset) + new Vector3(0, 0.5f, 0);
+
+            if (footstepSplashPrefab != null)
+            {
+                // Use the scaled custom realistic prefab
+                SpawnPrefabSplash(footstepSplashPrefab, splashSpawnPos, footstepSplashScale, 3f);
+            }
+            else
+            {
+                SpawnWaterSplash(splashSpawnPos, 1f);
+            }
+            lastSplashPosition = transform.position;
+        }
 
         // 1. ORIGINAL AI LOGIC
         float distance = Vector3.Distance(transform.position, player.position);
@@ -81,21 +117,32 @@ public class MutantBossController : MonoBehaviour
 
         // 2. PASSIVE EFFECT WATCHER
         // We watch the animator state and inject our epic effects at the perfect time!
-        AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
 
         if (stateInfo.IsName("Mutant Jumping (1)"))
         {
             if (!hasDoneJumpEffect) { StartCoroutine(DoJumpEffect(distance)); hasDoneJumpEffect = true; }
-            hasDoneRoarEffect = false;
+            hasDoneRoarEffect = false; hasDoneTurnSplash = false;
         }
         else if (stateInfo.IsName("Mutant Roaring"))
         {
             if (!hasDoneRoarEffect) { StartCoroutine(DoRoarEffect(distance)); hasDoneRoarEffect = true; }
-            hasDoneSwipeEffect = false; hasDoneJumpEffect = false;
+            hasDoneSwipeEffect = false; hasDoneJumpEffect = false; hasDoneTurnSplash = false;
+        }
+        else if (stateInfo.IsName("Mutant Right Turn 90") || stateInfo.IsName("Mutant Left Turn 90"))
+        {
+            if (!hasDoneTurnSplash)
+            {
+                // When he turns, his massive foot drags through the water
+                Vector3 turnSplashPos = transform.position + (transform.forward * 5f) + new Vector3(0, 0.5f, 0);
+                if (footstepSplashPrefab != null) SpawnPrefabSplash(footstepSplashPrefab, turnSplashPos, footstepSplashScale, 3f);
+                else SpawnWaterSplash(turnSplashPos, 1f);
+                hasDoneTurnSplash = true;
+            }
+            hasDoneJumpEffect = false; hasDoneRoarEffect = false;
         }
         else
         {
-            hasDoneJumpEffect = false; hasDoneRoarEffect = false;
+            hasDoneJumpEffect = false; hasDoneRoarEffect = false; hasDoneTurnSplash = false;
         }
     }
 
@@ -103,6 +150,8 @@ public class MutantBossController : MonoBehaviour
     {
         // Wait for the exact moment the slice hits the player
         yield return new WaitForSeconds(damageDelay);
+        if (isDead) yield break; // Cancel if he was killed!
+
         DealPunchDamage();
 
         // EFFECT: The Wind-Tunnel Slice!
@@ -129,9 +178,24 @@ public class MutantBossController : MonoBehaviour
             yield return null; // Wait for the next frame
         }
 
+        if (isDead) yield break; // Cancel if he was killed!
+
         // EFFECT: The Earthquake! (Made much stronger!)
         if (Camera.main != null)
             Camera.main.transform.DOShakePosition(1.5f, new Vector3(0, 8f, 0), 30, 90f); // Insane vertical shake
+
+        // EFFECT: Massive Water Splash!
+        Vector3 jumpSplashPos = transform.position + (transform.forward * (splashForwardOffset + 5f)) + new Vector3(0, 1f, 0);
+        
+        if (massiveJumpSplashPrefab != null)
+        {
+            SpawnPrefabSplash(massiveJumpSplashPrefab, jumpSplashPos, jumpSplashScale, 5f);
+        }
+        else
+        {
+            // Fallback to our procedural code splash
+            SpawnWaterSplash(jumpSplashPos, 6f);
+        }
 
         // Deal AOE damage to the player if they are nearby when he hits the ground
         if (Vector3.Distance(transform.position, player.position) <= punchDistance * 2f)
@@ -145,6 +209,7 @@ public class MutantBossController : MonoBehaviour
     {
         // Wait 3.5 seconds into the roar animation before shooting fire!
         yield return new WaitForSeconds(3.5f);
+        if (isDead) yield break; // Cancel if he was killed!
 
         // EFFECT: Dragon's Breath!
         if (wildFirePrefab != null)
@@ -265,10 +330,34 @@ public class MutantBossController : MonoBehaviour
         Collider bossCollider = GetComponent<Collider>();
         if (bossCollider != null) bossCollider.enabled = false;
 
-        // Delay Victory UI!
-        Invoke("ShowVictoryUI", 7f);
+        StartCoroutine(DoDeathSplash());
 
-        Destroy(gameObject, 10f);
+        // Delay Victory UI by 10 seconds!
+        Invoke("ShowVictoryUI", 10f);
+
+        Destroy(gameObject, 15f); // Keep him around a bit longer for the 10s UI
+    }
+
+    private System.Collections.IEnumerator DoDeathSplash()
+    {
+        // Wait exactly until he physically hits the water (tweakable in Inspector)
+        yield return new WaitForSeconds(deathSplashDelay);
+
+        // EFFECT: The Death Earthquake!
+        if (Camera.main != null)
+            Camera.main.transform.DOShakePosition(2.5f, new Vector3(0, 12f, 0), 30, 90f);
+
+        // EFFECT: Massive Death Splash!
+        Vector3 deathSplashPos = transform.position + (transform.forward * 10f) + new Vector3(0, 1f, 0);
+        
+        if (massiveJumpSplashPrefab != null)
+        {
+            SpawnPrefabSplash(massiveJumpSplashPrefab, deathSplashPos, jumpSplashScale * 1.5f, 6f);
+        }
+        else
+        {
+            SpawnWaterSplash(deathSplashPos, 8f);
+        }
     }
 
     private void ShowVictoryUI()
@@ -281,5 +370,78 @@ public class MutantBossController : MonoBehaviour
     {
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, punchDistance);
+    }
+
+    /// <summary>
+    /// Dynamically creates a gorgeous water splash particle effect using code so we don't need prefabs!
+    /// </summary>
+    private void SpawnWaterSplash(Vector3 position, float scale)
+    {
+        GameObject splashObj = new GameObject("WaterSplash");
+        splashObj.transform.position = position + new Vector3(0, 0.5f, 0); // spawn slightly above ground
+        
+        ParticleSystem ps = splashObj.AddComponent<ParticleSystem>();
+        var main = ps.main;
+        main.duration = 1f;
+        main.startLifetime = 0.5f;
+        main.startSpeed = new ParticleSystem.MinMaxCurve(5f * scale, 15f * scale);
+        main.startSize = new ParticleSystem.MinMaxCurve(0.3f * scale, 1.2f * scale);
+        main.startColor = new Color(0.8f, 0.95f, 1f, 0.7f); // Water blue/white
+        main.gravityModifier = 2f; // Fast falling droplets
+        main.simulationSpace = ParticleSystemSimulationSpace.World;
+        main.simulationSpeed = splashSimulationSpeed; // Slower simulation for massive scale!
+        main.maxParticles = 1000;
+
+        var emission = ps.emission;
+        emission.rateOverTime = 0;
+        // Burst a ton of droplets instantly
+        emission.SetBursts(new ParticleSystem.Burst[] { new ParticleSystem.Burst(0f, (short)(40 * scale), (short)(80 * scale)) });
+
+        var shape = ps.shape;
+        shape.shapeType = ParticleSystemShapeType.Cone;
+        shape.angle = 45f;
+        shape.radius = 1.5f * scale; // Wider base for the boss
+        shape.rotation = new Vector3(-90, 0, 0); // Point straight upwards
+
+        var renderer = splashObj.GetComponent<ParticleSystemRenderer>();
+        renderer.renderMode = ParticleSystemRenderMode.Billboard;
+        
+        // Find a basic fast rendering material to use for the droplets
+        Shader unlitShader = Shader.Find("Universal Render Pipeline/Particles/Unlit");
+        if (unlitShader == null) unlitShader = Shader.Find("Particles/Standard Unlit");
+        if (unlitShader == null) unlitShader = Shader.Find("Sprites/Default");
+        
+        if (unlitShader != null)
+        {
+            Material waterMat = new Material(unlitShader);
+            if (waterMat.HasProperty("_BaseColor")) waterMat.SetColor("_BaseColor", new Color(0.8f, 0.95f, 1f, 0.7f));
+            else if (waterMat.HasProperty("_Color")) waterMat.color = new Color(0.8f, 0.95f, 1f, 0.7f);
+            renderer.material = waterMat;
+        }
+
+        ps.Play();
+        Destroy(splashObj, 2f); // Clean up memory automatically
+    }
+
+    /// <summary>
+    /// Helper method to properly instantiate and forcefully scale custom Particle System Prefabs 
+    /// (Fixes the issue where imported prefabs are too small and ignore normal scaling)
+    /// </summary>
+    private void SpawnPrefabSplash(GameObject prefab, Vector3 position, float scaleMultiplier, float lifeTime)
+    {
+        GameObject splash = Instantiate(prefab, position, Quaternion.identity);
+        splash.transform.localScale = Vector3.one * scaleMultiplier;
+
+        // Many Asset Store particle systems are set to 'Local' scaling, meaning they ignore the boss's massive size!
+        // This loop forces all child particles in the prefab to respect our new massive scale AND slows them down.
+        ParticleSystem[] systems = splash.GetComponentsInChildren<ParticleSystem>();
+        foreach(ParticleSystem ps in systems)
+        {
+            var main = ps.main;
+            main.scalingMode = ParticleSystemScalingMode.Hierarchy; 
+            main.simulationSpeed = splashSimulationSpeed; // Gives it that epic slow-motion feel
+        }
+
+        Destroy(splash, lifeTime);
     }
 }
