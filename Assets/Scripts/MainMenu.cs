@@ -1,25 +1,49 @@
+using System.Collections;
 using UnityEngine;
-using UnityEngine.SceneManagement; // This lets us load scenes!
+using UnityEngine.SceneManagement;
 
 public class MainMenu : MonoBehaviour
 {
-    // Make sure you have added your game scene to the Build Settings!
-    public string gameSceneName = "PlayScene"; // Or whatever your Viking village scene is called!
+    public string gameSceneName = "PlayScene";
+
+    [Header("Audio Settings")]
+    [Tooltip("Drag your button click sound here")]
+    public AudioClip clickSoundClip;
+
+    private void PlayClickSoundAndExecute(System.Action onComplete)
+    {
+        if (clickSoundClip != null)
+        {
+            GameObject soundObj = new GameObject("TempClickSound");
+            DontDestroyOnLoad(soundObj);
+            AudioSource source = soundObj.AddComponent<AudioSource>();
+            source.clip = clickSoundClip;
+            source.spatialBlend = 0f;
+            source.Play();
+            Destroy(soundObj, clickSoundClip.length);
+        }
+        StartCoroutine(ExecuteAfterDelay(onComplete, 0.2f));
+    }
+
+    private IEnumerator ExecuteAfterDelay(System.Action onComplete, float delay)
+    {
+        yield return new WaitForSecondsRealtime(delay);
+        onComplete?.Invoke();
+    }
 
     public void ClickPlay()
     {
-        Debug.Log("Loading Game...");
-        SceneManager.LoadScene(gameSceneName);
+        PlayClickSoundAndExecute(() => SceneManager.LoadScene(gameSceneName));
     }
 
     public void ClickQuit()
     {
-        Debug.Log("Quitting Game...");
-        Application.Quit();
-
-        // This line only works when testing in the Unity Editor
+        PlayClickSoundAndExecute(() => 
+        {
+            Application.Quit();
 #if UNITY_EDITOR
-        UnityEditor.EditorApplication.isPlaying = false;
+            UnityEditor.EditorApplication.isPlaying = false;
 #endif
+        });
     }
 }
