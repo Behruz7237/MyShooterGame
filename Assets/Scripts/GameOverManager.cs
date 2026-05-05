@@ -30,8 +30,11 @@ public class GameOverManager : MonoBehaviour
     {
         // Get or add an AudioSource to play the GameOver sound
         audioSource = GetComponent<AudioSource>();
-        audioSource.playOnAwake = false;
-        audioSource.spatialBlend = 0f; // Ensure it plays 2D (not affected by distance)
+        if (audioSource != null)
+        {
+            audioSource.playOnAwake = false;
+            audioSource.spatialBlend = 0f; // Ensure it plays 2D (not affected by distance)
+        }
     }
 
     void Start()
@@ -149,7 +152,8 @@ public class GameOverManager : MonoBehaviour
     private void HandleGameOverAudio()
     {
         // 1. Find every AudioSource in the game
-        AudioSource[] allAudioSources = Object.FindObjectsByType<AudioSource>(FindObjectsSortMode.None);
+        // Using FindObjectsOfType to ensure backwards compatibility with all Unity versions
+        AudioSource[] allAudioSources = Object.FindObjectsOfType<AudioSource>();
 
         foreach (AudioSource source in allAudioSources)
         {
