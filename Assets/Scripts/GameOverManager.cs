@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using DG.Tweening;
 
+[RequireComponent(typeof(AudioSource))]
 public class GameOverManager : MonoBehaviour
 {
     public GameObject gameOverUI; // Drag your GameOverCanvas here
@@ -11,11 +12,27 @@ public class GameOverManager : MonoBehaviour
     [SerializeField] private TMP_Text soulText;  // Drag your SoulText here
     [SerializeField] private TMP_Text timeText;  // Drag your TimeText here
 
+    [Header("Audio Settings")]
+    [Tooltip("Drag the AudioSource playing the Viking background song here so it doesn't get muted.")]
+    [SerializeField] private AudioSource backgroundSongSource;
+    [Tooltip("Drag your Game Over/Victory sound effect here.")]
+    [SerializeField] private AudioClip gameOverSound;
+
+    private AudioSource audioSource;
+
     // --- Static kill counter (accessible from anywhere) ---
     public static int killCount = 0;
 
     // --- Survival timer ---
     private float startTime;
+
+    void Awake()
+    {
+        // Get or add an AudioSource to play the GameOver sound
+        audioSource = GetComponent<AudioSource>();
+        audioSource.playOnAwake = false;
+        audioSource.spatialBlend = 0f; // Ensure it plays 2D (not affected by distance)
+    }
 
     void Start()
     {
@@ -92,6 +109,8 @@ public class GameOverManager : MonoBehaviour
 
         // Optional: Freeze the game time
         // Time.timeScale = 0f; 
+
+        HandleGameOverAudio();
     }
 
     public void TriggerVictory(string victoryWord = "RAGNAROK")
@@ -124,6 +143,28 @@ public class GameOverManager : MonoBehaviour
                     t.transform.DOScale(Vector3.one, 1.2f).SetEase(Ease.OutBack).SetDelay(0.8f).SetUpdate(true);
                 }
             }
+        }
+    }
+
+    private void HandleGameOverAudio()
+    {
+        // 1. Find every AudioSource in the game
+        AudioSource[] allAudioSources = Object.FindObjectsByType<AudioSource>(FindObjectsSortMode.None);
+
+        foreach (AudioSource source in allAudioSources)
+        {
+            // Don't mute the background song, our own AudioSource, or UI click sounds
+            if (source == backgroundSongSource || source == audioSource)
+                continue;
+
+            // Pause or mute them
+            source.Pause();
+        }
+
+        // 2. Play the Game Over/Victory Sound Effect
+        if (gameOverSound != null && audioSource != null)
+        {
+            audioSource.PlayOneShot(gameOverSound);
         }
     }
 
